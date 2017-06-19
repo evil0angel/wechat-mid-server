@@ -3,13 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.gaofeng</groupId>
-	<artifactId>wechat-mid-tier</artifactId>
+	<groupId>com.jary</groupId>
+	<artifactId>wechat-mid-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>wechat-mid-tier</name>
-	<description>Demo project for Spring Boot</description>
+	<name>wechat-mid-server</name>
+	<description>微信公众号统一管理AccessToken的中间服务</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
