@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.gaofeng.mapper.WxTokenMapper">
+<mapper namespace="com.jary.mapper.WxTokenMapper">
 
-    <resultMap id="WxTokenResultMap" type="com.gaofeng.model.WxToken">
+    <resultMap id="WxTokenResultMap" type="com.jary.model.WxToken">
         <id property="wxId" column="wx_id" jdbcType="VARCHAR"/>
         <result property="appid" column="appid" jdbcType="VARCHAR"/>
         <result property="secret" column="secret" jdbcType="VARCHAR"/>
@@ -23,7 +23,7 @@
         FROM wx_tokens
     </select>
 
-    <select id="getByCondition" parameterType="com.gaofeng.model.WxToken" resultMap="WxTokenResultMap">
+    <select id="getByWxToken" parameterType="com.jary.model.WxToken" resultMap="WxTokenResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM wx_tokens
@@ -48,12 +48,12 @@
         wx_id = #{wxId}
     </select>
 
-    <insert id="insert" parameterType="com.gaofeng.model.WxToken">
+    <insert id="insert" parameterType="com.jary.model.WxToken">
         INSERT INTO wx_tokens(wx_id, appid, secret, access_token, expires_in, refresh_in, refresh_times, status)
         VALUES (#{wxId}, #{appid}, #{secret}, #{accessToken}, #{expiresIn}, #{refreshIn}, #{refreshTimes}, #{status})
     </insert>
 
-    <update id="update" parameterType="com.gaofeng.model.WxToken">
+    <update id="update" parameterType="com.jary.model.WxToken">
         UPDATE
         wx_tokens
         <trim prefix="set" suffixOverrides=",">
