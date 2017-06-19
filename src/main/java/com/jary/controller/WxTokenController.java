@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
  * Created by GF on 2017/6/18.
  */
 @RestController
-@RequestMapping(value = "/wx-tokens")
+@RequestMapping(value = "/wxtokens")
 public class WxTokenController {
 
     @Autowired
@@ -29,12 +29,12 @@ public class WxTokenController {
         return wxTokenService.getById(wxId);
     }
 
-    @RequestMapping(value = "/{wxId}/app", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{wxId}", method = RequestMethod.PUT)
     public WxToken updateAppInfo(@PathVariable String wxId, @RequestBody WxAppParam param) throws OperationException, WechatException, ParameterException {
         return wxTokenService.updateAppInfo(wxId, param.getAppid(), param.getSecret());
     }
 
-    @RequestMapping(value = "/{wxId}/token", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{wxId}/refresh", method = RequestMethod.GET)
     public WxToken refreshToken(@PathVariable String wxId) throws WechatException, OperationException {
         return wxTokenService.updateToken(wxId);
     }
