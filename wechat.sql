@@ -1,19 +1,3 @@
-/*
- Navicat Premium Data Transfer
-
- Source Server         : 微信建权
- Source Server Type    : MySQL
- Source Server Version : 50537
- Source Host           : 115.28.161.24
- Source Database       : wechat
-
- Target Server Type    : MySQL
- Target Server Version : 50537
- File Encoding         : utf-8
-
- Date: 06/19/2017 21:01:15 PM
-*/
-
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
