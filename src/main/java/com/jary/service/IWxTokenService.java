@@ -1,8 +1,7 @@
 package com.jary.service;
 
-import com.jary.common.exception.OperationException;
-import com.jary.common.exception.ParameterException;
-import com.jary.common.exception.WechatException;
+import com.jary.common.exception.WxErrorException;
+import com.jary.common.exception.WxTokenQueryException;
 import com.jary.model.WxToken;
 
 import java.util.List;
@@ -37,10 +36,10 @@ public interface IWxTokenService {
      * @param appid
      * @param secret
      * @return
-     * @throws ParameterException
-     * @throws WechatException
+     * @throws IllegalArgumentException
+     * @throws WxErrorException
      */
-    WxToken saveOne(String appid, String secret) throws ParameterException, WechatException;
+    WxToken saveOne(String appid, String secret) throws IllegalArgumentException, WxErrorException;
 
     /**
      * 更新公众号AccessToken
@@ -48,7 +47,7 @@ public interface IWxTokenService {
      * @param wxId
      * @return
      */
-    WxToken updateToken(String wxId) throws WechatException, OperationException;
+    WxToken updateToken(String wxId) throws WxErrorException, WxTokenQueryException;
 
     /**
      * 更新公众号信息
@@ -57,9 +56,9 @@ public interface IWxTokenService {
      * @param appid
      * @param secret
      * @return
-     * @throws ParameterException
-     * @throws WechatException
+     * @throws IllegalArgumentException
+     * @throws WxErrorException
      */
-    WxToken updateAppInfo(String wxId, String appid, String secret) throws ParameterException, WechatException, OperationException;
+    WxToken updateAppInfo(String wxId, String appid, String secret) throws IllegalArgumentException, WxErrorException;
 
 }

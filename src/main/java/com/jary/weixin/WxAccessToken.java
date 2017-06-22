@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Created by GF on 2017/6/18.
  */
-public class AccessToken implements Serializable {
+public class WxAccessToken implements Serializable {
 
     private static final long serialVersionUID = 8401201822364635155L;
 
@@ -21,7 +21,7 @@ public class AccessToken implements Serializable {
         return accessToken;
     }
 
-    public AccessToken setAccessToken(String accessToken) {
+    public WxAccessToken setAccessToken(String accessToken) {
         this.accessToken = accessToken;
         return this;
     }
@@ -30,7 +30,7 @@ public class AccessToken implements Serializable {
         return expiresIn;
     }
 
-    public AccessToken setExpiresIn(int expiresIn) {
+    public WxAccessToken setExpiresIn(int expiresIn) {
         this.expiresIn = expiresIn;
         return this;
     }

@@ -1,8 +1,7 @@
 package com.jary.controller;
 
-import com.jary.common.exception.OperationException;
-import com.jary.common.exception.ParameterException;
-import com.jary.common.exception.WechatException;
+import com.jary.common.exception.WxErrorException;
+import com.jary.common.exception.WxTokenQueryException;
 import com.jary.model.WxAppParam;
 import com.jary.model.WxToken;
 import com.jary.service.IWxTokenService;
@@ -20,22 +19,22 @@ public class WxTokenController {
     private IWxTokenService wxTokenService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public WxToken register(@RequestBody WxAppParam param) throws ParameterException, WechatException {
+    public WxToken register(@RequestBody WxAppParam param) throws IllegalArgumentException, WxErrorException {
         return wxTokenService.saveOne(param.getAppid(), param.getSecret());
     }
 
     @RequestMapping(value = "/{wxId}", method = RequestMethod.GET)
-    public WxToken getAccessToken(@PathVariable String wxId){
+    public WxToken getAccessToken(@PathVariable String wxId) {
         return wxTokenService.getById(wxId);
     }
 
     @RequestMapping(value = "/{wxId}", method = RequestMethod.PUT)
-    public WxToken updateAppInfo(@PathVariable String wxId, @RequestBody WxAppParam param) throws OperationException, WechatException, ParameterException {
+    public WxToken updateAppInfo(@PathVariable String wxId, @RequestBody WxAppParam param) throws IllegalArgumentException, WxErrorException {
         return wxTokenService.updateAppInfo(wxId, param.getAppid(), param.getSecret());
     }
 
     @RequestMapping(value = "/{wxId}/refresh", method = RequestMethod.GET)
-    public WxToken refreshToken(@PathVariable String wxId) throws WechatException, OperationException {
+    public WxToken refreshToken(@PathVariable String wxId) throws WxErrorException, WxTokenQueryException {
         return wxTokenService.updateToken(wxId);
     }
 }

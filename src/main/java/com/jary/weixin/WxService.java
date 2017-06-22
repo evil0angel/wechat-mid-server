@@ -1,6 +1,8 @@
 package com.jary.weixin;
 
 import com.alibaba.fastjson.JSON;
+import com.jary.common.exception.WxErrorException;
+import com.jary.common.result.WxError;
 import com.jary.utils.HttpClientUtil;
 
 /**
@@ -14,11 +16,16 @@ public class WxService {
      * @param secret
      * @return
      */
-    public static AccessToken getAccessToken(String appid, String secret) {
-        String result = HttpClientUtil.sendHttpGet("https://api.weixin.qq.com/cgi-bin/token?" +
+    public static WxAccessToken getAccessToken(String appid, String secret) throws WxErrorException {
+        String resultContent = HttpClientUtil.sendHttpGet("https://api.weixin.qq.com/cgi-bin/token?" +
                 "grant_type=client_credential&" +
                 "appid=" + appid + "&" +
                 "secret=" + secret);
-        return JSON.parseObject(result, AccessToken.class);
+        WxError error = WxError.fromJson(resultContent);
+        error.setJson(resultContent);
+        if (error.getErrorCode() != 0) {
+            throw new WxErrorException(error);
+        }
+        return JSON.parseObject(resultContent, WxAccessToken.class);
     }
 }

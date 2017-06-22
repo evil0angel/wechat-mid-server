@@ -14,35 +14,35 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(OperationException.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(WxErrorException.class)
+    @ResponseStatus(value = HttpStatus.OK)
     public
     @ResponseBody
-    Object handleOperationException(OperationException ex) {
-        ResultMsg resultMsg = new ResultMsg(ResultStatus.OPERATION_ERROR.getCode(),
-                ResultStatus.OPERATION_ERROR.getMessage(),
-                ex.getMessage());
-        return resultMsg;
-    }
-
-    @ExceptionHandler(ParameterException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public
-    @ResponseBody
-    Object handleParameterException(ParameterException ex) {
-        ResultMsg resultMsg = new ResultMsg(ResultStatus.PARAMETER_ERROR.getCode(),
-                ResultStatus.PARAMETER_ERROR.getMessage(),
-                ex.getMessage());
-        return resultMsg;
-    }
-
-    @ExceptionHandler(WechatException.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public
-    @ResponseBody
-    Object handleWechatException(WechatException ex) {
+    Object handleWxErrorException(WxErrorException ex) {
         ResultMsg resultMsg = new ResultMsg(ResultStatus.WX_SERVER_ERROR.getCode(),
                 ResultStatus.WX_SERVER_ERROR.getMessage(),
+                ex.getError().getJson());
+        return resultMsg;
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(value = HttpStatus.OK)
+    public
+    @ResponseBody
+    Object handleIllegalArgumentException(WxErrorException ex) {
+        ResultMsg resultMsg = new ResultMsg(ResultStatus.ILLEGAL_ARGUMENT_ERROR.getCode(),
+                ResultStatus.ILLEGAL_ARGUMENT_ERROR.getMessage(),
+                ex.getMessage());
+        return resultMsg;
+    }
+
+    @ExceptionHandler(WxTokenQueryException.class)
+    @ResponseStatus(value = HttpStatus.OK)
+    public
+    @ResponseBody
+    Object handleWxTokenQueryException(WxTokenQueryException ex) {
+        ResultMsg resultMsg = new ResultMsg(ResultStatus.NOT_FOUND_ERROR.getCode(),
+                ResultStatus.NOT_FOUND_ERROR.getMessage(),
                 ex.getMessage());
         return resultMsg;
     }

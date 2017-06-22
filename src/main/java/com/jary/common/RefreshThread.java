@@ -1,7 +1,7 @@
 package com.jary.common;
 
-import com.jary.common.exception.OperationException;
-import com.jary.common.exception.WechatException;
+import com.jary.common.exception.WxErrorException;
+import com.jary.common.exception.WxTokenQueryException;
 import com.jary.model.WxToken;
 import com.jary.service.IWxTokenService;
 import org.slf4j.Logger;
@@ -26,11 +26,12 @@ public class RefreshThread implements Runnable {
         logger.info(Thread.currentThread() + "开始请求 wx_id:" + wxToken.getWxId());
         try {
             wxTokenService.updateToken(wxToken.getWxId());
-        } catch (WechatException e) {
+        } catch (WxErrorException e) {
             logger.error(Thread.currentThread() + " wechat:" + e.getMessage());
             e.printStackTrace();
-        } catch (OperationException e) {
-            logger.error(Thread.currentThread() + " operation:" + e.getMessage());
+        } catch (WxTokenQueryException e) {
+            logger.error(Thread.currentThread() + " mid:" + e.getMessage());
+            e.printStackTrace();
         }
         logger.info(wxToken.getWxId() + "刷新成功" + wxToken.getAccessToken());
     }

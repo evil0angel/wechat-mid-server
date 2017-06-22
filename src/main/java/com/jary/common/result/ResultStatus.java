@@ -5,12 +5,9 @@ package com.jary.common.result;
  */
 public enum ResultStatus {
 
-    /**
-     */
-    OPERATION_ERROR(1004, "操作异常"),
-    PARAMETER_ERROR(1005, "参数错误"),
-    WX_SERVER_ERROR(1006, "微信服务异常");
-
+    WX_SERVER_ERROR(1001, "微信服务异常"),
+    ILLEGAL_ARGUMENT_ERROR(1002, "参数错误"),
+    NOT_FOUND_ERROR(1003, "没有查询结果");
 
     /**
      * 返回码

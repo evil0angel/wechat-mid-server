@@ -1,13 +1,12 @@
 package com.jary.service.impl;
 
-import com.jary.common.exception.OperationException;
-import com.jary.common.exception.ParameterException;
-import com.jary.common.exception.WechatException;
+import com.jary.common.exception.WxErrorException;
+import com.jary.common.exception.WxTokenQueryException;
 import com.jary.mapper.WxTokenMapper;
 import com.jary.model.WxToken;
 import com.jary.service.IWxTokenService;
 import com.jary.utils.BaseUtils;
-import com.jary.weixin.AccessToken;
+import com.jary.weixin.WxAccessToken;
 import com.jary.weixin.WxService;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -40,21 +39,18 @@ public class WxTokenServiceImpl implements IWxTokenService {
     }
 
     @Override
-    public WxToken saveOne(String appid, String secret) throws ParameterException, WechatException {
+    public WxToken saveOne(String appid, String secret) throws IllegalArgumentException, WxErrorException {
         if (StringUtils.isBlank(appid) || StringUtils.isBlank(secret)) {
-            throw new ParameterException("参数不可以为空");
+            throw new IllegalArgumentException("appid&secret不可以为空");
         }
-        AccessToken accessToken = WxService.getAccessToken(appid, secret);
-        if (accessToken == null) {
-            throw new WechatException("获取AccessToken失败");
-        }
+        WxAccessToken wxAccessToken = WxService.getAccessToken(appid, secret);
         WxToken wxToken = new WxToken();
         wxToken
-                .setWxId(UUID.randomUUID().toString())
+                .setWxId(UUID.randomUUID().toString().replaceAll("-", ""))
                 .setAppid(appid)
                 .setSecret(secret)
-                .setAccessToken(accessToken.getAccessToken())
-                .setExpiresIn(new DateTime(new Date()).plusSeconds(accessToken.getExpiresIn()).toDate())
+                .setAccessToken(wxAccessToken.getAccessToken())
+                .setExpiresIn(new DateTime(new Date()).plusSeconds(wxAccessToken.getExpiresIn()).toDate())
                 .setRefreshIn(new Date())
                 .setRefreshTimes(1)
                 .setStatus(STATUS_NORMAL);
@@ -63,25 +59,30 @@ public class WxTokenServiceImpl implements IWxTokenService {
     }
 
     @Override
-    public WxToken updateToken(String wxId) throws WechatException, OperationException {
+    public WxToken updateToken(String wxId) throws WxErrorException, WxTokenQueryException {
         WxToken wxToken = wxTokenMapper.getOne(wxId);
+        if(wxToken == null){
+            throw new WxTokenQueryException("没有找到当前的WxToken");
+        }
         if (wxToken.getStatus().equals(STATUS_MODIFYING)) {
-            throw new OperationException("Token已处于修改中");
+            return wxToken;
         }
         modifyStatus(wxId, STATUS_MODIFYING);
-        AccessToken accessToken = WxService.getAccessToken(wxToken.getAppid(), wxToken.getSecret());
-        if (accessToken == null) {
+        WxAccessToken wxAccessToken;
+        try {
+            wxAccessToken = WxService.getAccessToken(wxToken.getAppid(), wxToken.getSecret());
+        } catch (WxErrorException e) {
             modifyStatus(wxId, STATUS_NORMAL);
-            throw new WechatException("获取AccessToken失败");
+            throw new WxErrorException(e.getError());
         }
-        if(BaseUtils.isSameDate(wxToken.getRefreshIn(), new Date())){
+        if (BaseUtils.isSameDate(wxToken.getRefreshIn(), new Date())) {
             wxToken.setRefreshTimes(wxToken.getRefreshTimes() + 1);
-        }else{
+        } else {
             wxToken.setRefreshTimes(1);
         }
         wxToken
-                .setAccessToken(accessToken.getAccessToken())
-                .setExpiresIn(new DateTime(new Date()).plusSeconds(accessToken.getExpiresIn()).toDate())
+                .setAccessToken(wxAccessToken.getAccessToken())
+                .setExpiresIn(new DateTime(new Date()).plusSeconds(wxAccessToken.getExpiresIn()).toDate())
                 .setRefreshIn(new Date())
                 .setStatus(STATUS_NORMAL);
         wxTokenMapper.update(wxToken);
@@ -89,25 +90,27 @@ public class WxTokenServiceImpl implements IWxTokenService {
     }
 
     @Override
-    public WxToken updateAppInfo(String wxId, String appid, String secret) throws ParameterException, WechatException, OperationException {
+    public WxToken updateAppInfo(String wxId, String appid, String secret) throws WxErrorException {
         if (StringUtils.isBlank(appid) || StringUtils.isBlank(secret)) {
-            throw new ParameterException("参数不可以为空");
+            throw new IllegalArgumentException("appid&secret不可以为空");
         }
         WxToken wxToken = wxTokenMapper.getOne(wxId);
         if (wxToken.getStatus().equals(STATUS_MODIFYING)) {
-            throw new OperationException("Token正处于修改中");
+            return wxToken;
         }
         modifyStatus(wxId, STATUS_MODIFYING);
-        AccessToken accessToken = WxService.getAccessToken(appid, secret);
-        if (accessToken == null) {
+        WxAccessToken wxAccessToken;
+        try {
+            wxAccessToken = WxService.getAccessToken(wxToken.getAppid(), wxToken.getSecret());
+        } catch (WxErrorException e) {
             modifyStatus(wxId, STATUS_NORMAL);
-            throw new WechatException("获取AccessToken失败");
+            throw new WxErrorException(e.getError());
         }
         wxToken
                 .setAppid(appid)
                 .setSecret(secret)
-                .setAccessToken(accessToken.getAccessToken())
-                .setExpiresIn(new DateTime(new Date()).plusSeconds(accessToken.getExpiresIn()).toDate())
+                .setAccessToken(wxAccessToken.getAccessToken())
+                .setExpiresIn(new DateTime(new Date()).plusSeconds(wxAccessToken.getExpiresIn()).toDate())
                 .setRefreshIn(new Date())
                 .setRefreshTimes(1)
                 .setStatus(STATUS_NORMAL);
